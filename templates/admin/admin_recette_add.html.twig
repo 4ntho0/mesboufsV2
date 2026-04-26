@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une recette{% endblock %}
+
+{% block body %}
+
+<h1>Créer une recette</h1>
+
+<form method="POST" action="{{ path('recette_add') }}">
+
+    <div>
+        <label>Nom</label>
+        <input type="text" name="nom" required>
+    </div>
+
+    <div>
+        <label>Durée (min)</label>
+        <input type="number" name="duree">
+    </div>
+
+    <div>
+        <label>Instructions</label>
+        <textarea name="instruction"></textarea>
+    </div>
+
+    <div>
+        <label>Catégories</label>
+        <select name="categories[]" multiple>
+            {% for cat in categories %}
+                <option value="{{ cat.id }}">{{ cat.nom }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit">Créer la recette → Étape suivante</button>
+
+</form>
+
+<br>
+
+<a href="{{ path('recettes') }}">← Retour</a>
+
+{% endblock %}

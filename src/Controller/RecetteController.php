@@ -1,0 +1,129 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Recette;
+use App\Entity\CategorieRecette;
+use App\Entity\Ingredient;
+use App\Entity\Produit;
+use App\Entity\Unitee;
+use App\Entity\Note;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class RecetteController extends AbstractController
+{
+    // =========================
+    // LISTE
+    // =========================
+    #[Route('/admin/recettes', name: 'recettes')]
+    public function index(EntityManagerInterface $em): Response
+    {
+        return $this->render('admin/admin_recettes.html.twig', [
+            'recettes' => $em->getRepository(Recette::class)->findAll(),
+        ]);
+    }
+
+    // =========================
+    // FORM CREATION
+    // =========================
+    #[Route('/admin/recette/add-page', name: 'recette_add_page')]
+    public function addPage(EntityManagerInterface $em): Response
+    {
+        return $this->render('admin/admin_recette_add.html.twig', [
+            'categories' => $em->getRepository(CategorieRecette::class)->findAll(),
+        ]);
+    }
+
+    // =========================
+    // CREATE RECETTE
+    // =========================
+    #[Route('/admin/recette/add', name: 'recette_add', methods: ['POST'])]
+    public function add(Request $request, EntityManagerInterface $em): Response
+    {
+        $recette = new Recette();
+        $recette->setNom($request->request->get('nom'));
+        $recette->setInstruction($request->request->get('instruction'));
+        $recette->setDate(new \DateTime());
+
+        if ($request->request->get('duree')) {
+            $recette->setDuree((int)$request->request->get('duree'));
+        }
+
+        foreach ((array)$request->request->all('categories') as $id) {
+            $cat = $em->getRepository(CategorieRecette::class)->find($id);
+            if ($cat) {
+                $recette->addCategory($cat);
+            }
+        }
+
+        $em->persist($recette);
+        $em->flush();
+
+        return $this->redirectToRoute('recette_manage', [
+            'id' => $recette->getId()
+        ]);
+    }
+
+    // =========================
+    // PAGE STEP 2 (MANAGE)
+    // =========================
+    #[Route('/admin/recette/{id}/manage', name: 'recette_manage')]
+    public function manage(int $id, EntityManagerInterface $em): Response
+    {
+        return $this->render('admin/admin_recette_note_ingredient.html.twig', [
+            'recette' => $em->getRepository(Recette::class)->find($id),
+            'produits' => $em->getRepository(Produit::class)->findAll(),
+            'unitees' => $em->getRepository(Unitee::class)->findAll(),
+        ]);
+    }
+
+    // =========================
+    // ADD INGREDIENT
+    // =========================
+    #[Route('/admin/recette/{id}/ingredient/add', name: 'recette_add_ingredient', methods: ['POST'])]
+    public function addIngredient(int $id, Request $request, EntityManagerInterface $em): Response
+    {
+        $recette = $em->getRepository(Recette::class)->find($id);
+
+        $ingredient = new Ingredient();
+        $ingredient->setRecette($recette);
+        $ingredient->setQuantite((float)$request->request->get('quantite'));
+        $ingredient->setProduit($em->getRepository(Produit::class)->find($request->request->get('produit')));
+        $ingredient->setUnitee($em->getRepository(Unitee::class)->find($request->request->get('unitee')));
+
+        $em->persist($ingredient);
+        $em->flush();
+
+        return $this->redirectToRoute('recette_manage', ['id' => $id]);
+    }
+
+    // =========================
+    // SAVE NOTES
+    // =========================
+    #[Route('/admin/recette/{id}/note/save', name: 'recette_save_note', methods: ['POST'])]
+    public function saveNote(int $id, Request $request, EntityManagerInterface $em): Response
+    {
+        $recette = $em->getRepository(Recette::class)->find($id);
+
+        $note = $recette->getNote();
+
+        if (!$note) {
+            $note = new Note();
+            $note->setRecette($recette);
+        }
+
+        $note->setNoteAspect((int)$request->request->get('noteAspect'));
+        $note->setNoteOdeur((int)$request->request->get('noteOdeur'));
+        $note->setNoteGout((int)$request->request->get('noteGout'));
+        $note->setNoteTexture((int)$request->request->get('noteTexture'));
+
+        $em->persist($note);
+        $em->flush();
+
+        return $this->redirectToRoute('recettes');
+    }
+}

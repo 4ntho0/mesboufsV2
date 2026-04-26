@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<h1>Catégories de produits</h1>
+
+<h2>Ajouter une catégorie</h2>
+
+<form method="post" action="{{ path('categorie_produit_add') }}">
+    <input type="text" name="nom" placeholder="Nom de la catégorie" required>
+    <button>Ajouter</button>
+</form>
+
+<hr>
+
+<h2>Liste</h2>
+
+<ul>
+    {% for categorie in categories %}
+        <li>
+            {{ categorie.nom }}
+
+            <form method="post" action="{{ path('categorie_produit_delete', {id: categorie.id}) }}" style="display:inline;">
+                <button onclick="return confirm('Supprimer ?')">❌</button>
+            </form>
+        </li>
+    {% else %}
+        <li>Aucune catégorie</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+<form method="POST" action="{{ path('recette_update', {id: recette.id}) }}">
+
+    <input type="text" name="nom" value="{{ recette.nom }}">
+    <input type="number" name="duree" value="{{ recette.duree }}">
+    <textarea name="instruction">{{ recette.instruction }}</textarea>
+
+    <h3>Notes</h3>
+
+    <input type="number" name="noteAspect" value="{{ recette.note ? recette.note.noteAspect : '' }}">
+    <input type="number" name="noteOdeur" value="{{ recette.note ? recette.note.noteOdeur : '' }}">
+    <input type="number" name="noteGout" value="{{ recette.note ? recette.note.noteGout : '' }}">
+    <input type="number" name="noteTexture" value="{{ recette.note ? recette.note.noteTexture : '' }}">
+
+    <button type="submit">💾 Enregistrer</button>
+
+</form>
+    
+    <form method="POST" action="{{ path('recette_add_ingredient', {id: recette.id}) }}">
+
+    <select name="produit">
+        {% for p in produits %}
+            <option value="{{ p.id }}">{{ p.nom }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="unitee">
+        {% for u in unitees %}
+            <option value="{{ u.id }}">{{ u.nom }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="number" step="0.1" name="quantite">
+
+    <button type="submit">➕ Ajouter ingrédient</button>
+
+</form>

@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recettes{% endblock %}
+
+{% block body %}
+
+    <h1>Gestion des recettes</h1>
+
+    <hr> 
+    <a href="{{ path('recette_add_page') }}" class="btn btn-success">
+        + Ajouter une recette
+    </a>
+
+    {# LISTE DES RECETTES #}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Durée</th>
+                <th>Catégories</th>
+                <th>Note</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for recette in recettes %}
+                <tr>
+                    <td>{{ recette.nom }}</td>
+
+                    <td>
+                        {% if recette.duree %}
+                            {{ recette.duree }} min
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if recette.categories is not empty %}
+                            {% for cat in recette.categories %}
+                                <span>{{ cat.nom }}</span>{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if recette.note %}
+                            {{ recette.note.total }}/40
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {# MODIFIER (à créer plus tard) #}
+                        <a href="#" class="btn btn-warning">Modifier</a>
+
+                        {# SUPPRIMER #}
+                        <form method="POST"
+                              action="#"
+                              style="display:inline"
+                              onsubmit="return confirm('Supprimer cette recette ?');">
+
+                            <button type="submit">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucune recette</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
