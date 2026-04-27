@@ -4,40 +4,86 @@
 
 {% block body %}
 
-<h1>Créer une recette</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-<form method="POST" action="{{ path('recette_add') }}">
+        <h1>🍽 Créer une recette</h1>
 
-    <div>
-        <label>Nom</label>
-        <input type="text" name="nom" required>
+        <a href="{{ path('recettes') }}" class="btn btn-outline-secondary">
+            ← Retour
+        </a>
+
     </div>
 
-    <div>
-        <label>Durée (min)</label>
-        <input type="number" name="duree">
+    <div class="admin-card">
+
+        <form method="POST" action="{{ path('recette_add') }}">
+
+            {# NOM #}
+            <div class="mb-3">
+                <label class="form-label">Nom</label>
+                <input type="text"
+                       name="nom"
+                       class="form-control"
+                       required>
+            </div>
+
+            {# DATE INFO (optionnel, lecture seule) #}
+            <div class="mb-3">
+                <label class="form-label">Date de création</label>
+                <input type="text"
+                       class="form-control"
+                       value="{{ "now"|date('d/m/Y') }}"
+                       disabled>
+            </div>
+
+            {# DURÉE #}
+            <div class="mb-3">
+                <label class="form-label">Durée (min)</label>
+                <input type="number"
+                       name="duree"
+                       class="form-control">
+            </div>
+
+            {# INSTRUCTIONS #}
+            <div class="mb-3">
+                <label class="form-label">Instructions</label>
+                <textarea name="instruction"
+                          class="form-control"
+                          rows="4"></textarea>
+            </div>
+
+            {# CATÉGORIES #}
+            <div class="mb-3">
+                <label class="form-label">Catégories</label>
+
+                <select name="categories[]"
+                        class="form-control"
+                        multiple>
+
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}">
+                            {{ cat.nom }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+                <small class="text-muted">
+                    Maintenir CTRL (ou CMD) pour sélectionner plusieurs catégories
+                </small>
+            </div>
+
+            {# SUBMIT #}
+            <div class="text-end">
+
+                <button type="submit" class="btn btn-primary">
+                    ➜ Créer la recette
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
-
-    <div>
-        <label>Instructions</label>
-        <textarea name="instruction"></textarea>
-    </div>
-
-    <div>
-        <label>Catégories</label>
-        <select name="categories[]" multiple>
-            {% for cat in categories %}
-                <option value="{{ cat.id }}">{{ cat.nom }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <button type="submit">Créer la recette → Étape suivante</button>
-
-</form>
-
-<br>
-
-<a href="{{ path('recettes') }}">← Retour</a>
 
 {% endblock %}

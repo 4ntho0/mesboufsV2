@@ -4,111 +4,169 @@
 
 {% block body %}
 
-    <h1>{{ recette.nom }}</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-    <hr>
+    <h1>🍽 {{ recette.nom }}</h1>
 
-    {# ================= INGREDIENTS ================= #}
+    <a href="{{ path('recettes') }}" class="btn btn-outline-secondary">
+        ← Retour
+    </a>
 
-    <h2>Ajouter un ingrédient</h2>
+</div>
+
+{# ================= INGREDIENTS ================= #}
+<div class="admin-card mb-4">
+
+    <h3>➕ Ajouter un ingrédient</h3>
 
     <form method="POST" action="{{ path('recette_add_ingredient', {id: recette.id}) }}">
 
-        <div>
-            <label>Catégorie</label>
-            <select id="categorie-select">
-                <option value="">-- Choisir --</option>
+        <div class="mb-3">
+            <label class="form-label">Catégorie</label>
+
+            <select id="categorie-select" class="form-control">
+                <option value="">-- Choisir une catégorie --</option>
+
                 {% for c in categoriesProduits %}
                     <option value="{{ c.id }}">{{ c.nom }}</option>
                 {% endfor %}
             </select>
-
         </div>
 
-        <div>
-            <select name="produit" id="produit-select">
-                <option value="">-- Choisir une catégorie --</option>
+        <div class="mb-3">
+            <label class="form-label">Produit</label>
+
+            <select name="produit"
+                    id="produit-select"
+                    class="form-control"
+                    required>
+                <option value="">-- Choisir une catégorie d'abord --</option>
             </select>
         </div>
 
-        <div>
-            <label>Quantité</label>
-            <input type="number" step="0.01" name="quantite" required>
+        <div class="mb-3">
+            <label class="form-label">Quantité</label>
+            <input type="number"
+                   step="0.01"
+                   name="quantite"
+                   class="form-control"
+                   required>
         </div>
 
-        <div>
-            <label>Unité</label>
-            <select name="unitee">
+        <div class="mb-3">
+            <label class="form-label">Unité</label>
+
+            <select name="unitee" class="form-control" required>
                 {% for u in unitees %}
                     <option value="{{ u.id }}">{{ u.nom }}</option>
                 {% endfor %}
             </select>
         </div>
 
-        <button type="submit">Ajouter</button>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">
+                ➕ Ajouter
+            </button>
+        </div>
+
     </form>
 
-    <hr>
+</div>
 
-    <h3>Ingrédients actuels</h3>
+{# ================= LISTE INGREDIENTS ================= #}
+<div class="admin-card mb-4">
 
-    <ul>
+    <h3>📦 Ingrédients actuels</h3>
+
+    <ul class="list-group">
+
         {% for ing in recette.ingredients %}
-            <li>
-                {{ ing.quantite }} {{ ing.unitee.nom }} - {{ ing.produit.nom }}
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                <span>
+                    {{ ing.quantite }} {{ ing.unitee.nom }} - <strong>{{ ing.produit.nom }}</strong>
+                </span>
 
                 <form method="POST"
                       action="{{ path('recette_delete_ingredient', {id: ing.id}) }}"
-                      style="display:inline;">
+                      onsubmit="return confirm('Supprimer cet ingrédient ?');">
 
-                    <button type="submit">
+                    <button class="btn btn-sm btn-outline-danger">
                         ❌
                     </button>
+
                 </form>
+
             </li>
+
         {% else %}
-            <li>Aucun ingrédient</li>
-            {% endfor %}
+
+            <li class="list-group-item text-muted">
+                Aucun ingrédient
+            </li>
+
+        {% endfor %}
+
     </ul>
 
-    <hr>
+</div>
 
-    {# ================= NOTES ================= #}
+{# ================= NOTES ================= #}
+<div class="admin-card mb-4">
 
-    <h2>Notes de la recette</h2>
+    <h3>⭐ Notes de la recette</h3>
 
     <form method="POST" action="{{ path('recette_save_note', {id: recette.id}) }}">
 
-        <div>
-            <label>Aspect</label>
-            <input type="number" name="noteAspect" min="0" max="10" value="{{ recette.note ? recette.note.noteAspect : '' }}">
+        <div class="row">
+
+            <div class="col-md-3 mb-3">
+                <label>Aspect</label>
+                <input type="number" name="noteAspect"
+                       min="0" max="10"
+                       class="form-control"
+                       value="{{ recette.note ? recette.note.noteAspect : '' }}">
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label>Odeur</label>
+                <input type="number" name="noteOdeur"
+                       min="0" max="10"
+                       class="form-control"
+                       value="{{ recette.note ? recette.note.noteOdeur : '' }}">
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label>Goût</label>
+                <input type="number" name="noteGout"
+                       min="0" max="10"
+                       class="form-control"
+                       value="{{ recette.note ? recette.note.noteGout : '' }}">
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label>Texture</label>
+                <input type="number" name="noteTexture"
+                       min="0" max="10"
+                       class="form-control"
+                       value="{{ recette.note ? recette.note.noteTexture : '' }}">
+            </div>
+
         </div>
 
-        <div>
-            <label>Odeur</label>
-            <input type="number" name="noteOdeur" min="0" max="10" value="{{ recette.note ? recette.note.noteOdeur : '' }}">
+        <div class="text-end">
+            <button type="submit" class="btn btn-success">
+                💾 Enregistrer
+            </button>
         </div>
 
-        <div>
-            <label>Goût</label>
-            <input type="number" name="noteGout" min="0" max="10" value="{{ recette.note ? recette.note.noteGout : '' }}">
-        </div>
-
-        <div>
-            <label>Texture</label>
-            <input type="number" name="noteTexture" min="0" max="10" value="{{ recette.note ? recette.note.noteTexture : '' }}">
-        </div>
-
-        <button type="submit">
-            Enregistrer tout
-        </button>
     </form>
 
-    <hr>
-
-    <a href="{{ path('recettes') }}">← Retour</a>
+</div>
 
 {% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
 
@@ -123,7 +181,7 @@
                 const categorieId = this.value;
 
                 if (!categorieId) {
-                    produitSelect.innerHTML = '<option>Choisir une catégorie</option>';
+                    produitSelect.innerHTML = '<option value="">-- Choisir une catégorie --</option>';
                     return;
                 }
 
@@ -133,27 +191,25 @@
                 produitSelect.innerHTML = '<option>Chargement...</option>';
 
                 fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
+                    .then(response => response.json())
+                    .then(data => {
 
-                            console.log("DATA:", data); // 🔥 debug
+                        produitSelect.innerHTML = '';
 
-                            produitSelect.innerHTML = '';
-
-                            data.forEach(produit => {
-                                const option = document.createElement('option');
-                                option.value = produit.id;
-                                option.textContent = produit.nom;
-                                produitSelect.appendChild(option);
-                            });
-
-                            if (data.length === 0) {
-                                produitSelect.innerHTML = '<option>Aucun produit</option>';
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Erreur:", error);
+                        data.forEach(produit => {
+                            const option = document.createElement('option');
+                            option.value = produit.id;
+                            option.textContent = produit.nom;
+                            produitSelect.appendChild(option);
                         });
+
+                        if (data.length === 0) {
+                            produitSelect.innerHTML = '<option>Aucun produit</option>';
+                        }
+                    })
+                    .catch(() => {
+                        produitSelect.innerHTML = '<option>Erreur de chargement</option>';
+                    });
 
             });
 

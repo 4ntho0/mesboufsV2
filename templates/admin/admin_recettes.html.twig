@@ -4,81 +4,162 @@
 
 {% block body %}
 
-    <h1>Gestion des recettes</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <hr> 
-    <a href="{{ path('recette_add_page') }}" class="btn btn-success">
-        + Ajouter une recette
-    </a>
+        <h1>🍽 Gestion des recettes</h1>
 
-    {# LISTE DES RECETTES #}
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Durée</th>
-                <th>Catégories</th>
-                <th>Note</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+        <a href="{{ path('recette_add_page') }}" class="btn btn-primary">
+            + Ajouter une recette
+        </a>
 
-        <tbody>
-            {% for recette in recettes %}
+    </div>
+
+    <div class="admin-card">
+
+        <table class="table align-middle">
+
+            <thead>
                 <tr>
-                    <td>{{ recette.nom }}</td>
-
-                    <td>
-                        {% if recette.duree %}
-                            {{ recette.duree }} min
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-
-                    <td>
-                        {% if recette.categories is not empty %}
-                            {% for cat in recette.categories %}
-                                <span>{{ cat.nom }}</span>{% if not loop.last %}, {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-
-                    <td>
-                        {% if recette.note %}
-                            {{ recette.note.total }}/40
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-
-                    <td>
-                        {# MODIFIER (à créer plus tard) #}
-                        <a href="{{ path('recette_edit', {id: recette.id}) }}">
-                            Modifier
-                        </a>
-
-                        {# SUPPRIMER #}
-                        <form method="POST"
-                              action="{{ path('recette_delete', {id: recette.id}) }}"
-                              onsubmit="return confirm('Supprimer cette recette ?');"
-                              style="display:inline;">
-
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                Supprimer
-                            </button>
-
-                        </form>
-                    </td>
+                    <th class="sortable" data-sort="nom">Nom ⬍</th>
+                    <th class="sortable" data-sort="duree">Durée ⬍</th>
+                    <th>Catégories</th>
+                    <th class="sortable" data-sort="note">Note ⬍</th>
+                    <th class="text-end">Actions</th>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5">Aucune recette</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+
+                {% for recette in recettes %}
+
+                    <tr data-nom="{{ recette.nom|lower }}"
+                        data-duree="{{ recette.duree ?? 0 }}"
+                        data-note="{{ recette.note ? recette.note.total : 0 }}">
+
+                        <td>
+                            <strong>{{ recette.nom }}</strong>
+                        </td>
+
+                        <td>
+                            {% if recette.duree %}
+                                ⏱ {{ recette.duree }} min
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if recette.categories is not empty %}
+                                {% for cat in recette.categories %}
+                                    <span class="badge bg-secondary">
+                                        {{ cat.nom }}
+                                    </span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if recette.note %}
+                                <span class="badge bg-warning text-dark">
+                                    ⭐ {{ recette.note.total }}/40
+                                </span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-end">
+
+                            <a href="{{ path('recette_edit', {id: recette.id}) }}"
+                               class="btn btn-sm btn-outline-primary">
+                                ✏️ Modifier
+                            </a>
+
+                            <a href="{{ path('recette_manage', {id: recette.id}) }}"
+                               class="btn btn-sm btn-outline-success">
+                                ⚙️ Gérer
+                            </a>
+
+                            <form method="POST"
+                                  action="{{ path('recette_delete', {id: recette.id}) }}"
+                                  onsubmit="return confirm('Supprimer cette recette ?');"
+                                  style="display:inline;">
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger">
+                                    🗑 Supprimer
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            Aucune recette trouvée
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            let direction = {};
+
+            document.querySelectorAll('.sortable').forEach(header => {
+
+                header.style.cursor = 'pointer';
+
+                header.addEventListener('click', function () {
+
+                    const key = this.dataset.sort;
+                    const table = this.closest('table');
+                    const tbody = table.querySelector('tbody');
+
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                    direction[key] = !direction[key];
+
+                    rows.sort((a, b) => {
+
+                        let valA = a.dataset[key];
+                        let valB = b.dataset[key];
+
+                        if (key === 'nom') {
+                            return direction[key]
+                                    ? valA.localeCompare(valB)
+                                    : valB.localeCompare(valA);
+                        }
+
+                        return direction[key]
+                                ? valA - valB
+                                : valB - valA;
+                    });
+
+                    rows.forEach(row => tbody.appendChild(row));
+
+                });
+
+            });
+
+        });
+    </script>
 
 {% endblock %}

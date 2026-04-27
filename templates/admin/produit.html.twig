@@ -4,83 +4,164 @@
 
 {% block body %}
 
-<h1>Gestion des produits</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-{# FLASH MESSAGES #}
-{% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="alert alert-{{ label }}">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endfor %}
+        <h1>🥕 Gestion des produits</h1>
 
-<hr>
-
-{# FORM AJOUT PRODUIT #}
-<h2>Ajouter un produit</h2>
-
-<form method="POST" action="{{ path('produit_add') }}">
-    <div>
-        <label>Nom</label>
-        <input type="text" name="nom" required>
     </div>
 
-    <div>
-        <label>Catégorie</label>
-        <select name="categorie">
-            <option value="">-- Aucune --</option>
-            {% for categorie in categories %}
-                <option value="{{ categorie.id }}">
-                    {{ categorie.nom }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <button type="submit">Ajouter</button>
-</form>
-
-<hr>
-
-{# LISTE PRODUITS #}
-<h2>Liste des produits</h2>
-
-<table border="1" cellpadding="5">
-    <thead>
-        <tr>
-            <th>Nom</th>
-            <th>Catégorie</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for produit in produits %}
-            <tr>
-                <td>{{ produit.nom }}</td>
-                <td>
-                    {% if produit.categorie %}
-                        {{ produit.categorie.nom }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-                <td>
-                    <form method="POST"
-                          action="{{ path('produit_delete', {id: produit.id}) }}"
-                          onsubmit="return confirm('Supprimer ce produit ?');">
-
-                        <button type="submit">Supprimer</button>
-                    </form>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">Aucun produit</td>
-            </tr>
+    {# FLASH #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
         {% endfor %}
-    </tbody>
-</table>
+    {% endfor %}
+
+    <div class="admin-card mb-4">
+
+        <h3>➕ Ajouter un produit</h3>
+
+        <form method="POST" action="{{ path('produit_add') }}" class="row g-2">
+
+            <div class="col-md-5">
+                <input type="text"
+                       name="nom"
+                       class="form-control"
+                       placeholder="Nom du produit"
+                       required>
+            </div>
+
+            <div class="col-md-5">
+                <select name="categorie" class="form-control">
+                    <option value="">-- Aucune catégorie --</option>
+                    {% for categorie in categories %}
+                        <option value="{{ categorie.id }}">
+                            {{ categorie.nom }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100">
+                    Ajouter
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="admin-card">
+
+        <h3>📦 Liste des produits</h3>
+
+        <table class="table align-middle">
+
+            <thead>
+                <tr>
+                    <th class="sortable" data-sort="nom">Nom ⬍</th>
+                    <th>Catégorie</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for produit in produits %}
+
+                    <tr data-nom="{{ produit.nom|lower }}">
+
+                        <td>
+                            <strong>{{ produit.nom }}</strong>
+                        </td>
+
+                        <td>
+                            {% if produit.categorie %}
+                                <span class="badge bg-secondary">
+                                    {{ produit.categorie.nom }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-end">
+
+                            <form method="POST"
+                                  action="{{ path('produit_delete', {id: produit.id}) }}"
+                                  onsubmit="return confirm('Supprimer ce produit ?');"
+                                  style="display:inline;">
+
+                                <button class="btn btn-sm btn-outline-danger">
+                                    🗑 Supprimer
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">
+                            Aucun produit
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            let direction = {};
+
+            document.querySelectorAll('.sortable').forEach(header => {
+
+                header.style.cursor = 'pointer';
+
+                header.addEventListener('click', function () {
+
+                    const key = this.dataset.sort;
+                    const table = this.closest('table');
+                    const tbody = table.querySelector('tbody');
+
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                    direction[key] = !direction[key];
+
+                    rows.sort((a, b) => {
+
+                        let valA = a.dataset[key] || '';
+                        let valB = b.dataset[key] || '';
+
+                        return direction[key]
+                                ? valA.localeCompare(valB)
+                                : valB.localeCompare(valA);
+
+                    });
+
+                    rows.forEach(row => tbody.appendChild(row));
+
+                });
+
+            });
+
+        });
+    </script>
 
 {% endblock %}

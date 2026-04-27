@@ -1,34 +1,91 @@
 {% extends 'base.admin.html.twig' %}
 
-{% block title %}Catégories{% endblock %}
+{% block title %}Catégories recettes{% endblock %}
 
 {% block body %}
 
-<h1>Catégories de recettes</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2>Ajouter une catégorie</h2>
+        <h1>📂 Catégories de recettes</h1>
 
-<form method="post" action="{{ path('categorie_recette_add') }}">
-    <input type="text" name="nom" placeholder="Nom de la catégorie" required>
-    <button type="submit">Ajouter</button>
-</form>
+    </div>
 
-<hr>
+    {# ================= AJOUT ================= #}
+    <div class="admin-card mb-4">
 
-<h2>Liste</h2>
+        <h3>➕ Ajouter une catégorie</h3>
 
-<ul>
-    {% for categorie in categories %}
-        <li>
-            {{ categorie.nom }}
+        <form method="post" action="{{ path('categorie_recette_add') }}" class="d-flex gap-2">
 
-            <form method="post" action="{{ path('categorie_recette_delete', {id: categorie.id}) }}" style="display:inline;">
-                <button onclick="return confirm('Supprimer ?')">❌</button>
-            </form>
-        </li>
-    {% else %}
-        <li>Aucune catégorie</li>
-    {% endfor %}
-</ul>
+            <input type="text"
+                   name="nom"
+                   class="form-control"
+                   placeholder="Nom de la catégorie"
+                   required>
+
+            <button class="btn btn-primary">
+                Ajouter
+            </button>
+
+        </form>
+
+    </div>
+
+    {# ================= LISTE ================= #}
+    <div class="admin-card">
+
+        <h3>📋 Liste des catégories</h3>
+
+        <table class="table align-middle">
+
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for categorie in categories %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ categorie.nom }}</strong>
+                        </td>
+
+                        <td class="text-end">
+
+                            <form method="post"
+                                  action="{{ path('categorie_recette_delete', {id: categorie.id}) }}"
+                                  onsubmit="return confirm('Supprimer cette catégorie ?');"
+                                  style="display:inline;">
+
+                                <button class="btn btn-sm btn-outline-danger">
+                                    ❌ Supprimer
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+                        <td colspan="2" class="text-center text-muted py-4">
+                            Aucune catégorie
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 {% endblock %}

@@ -1,32 +1,95 @@
 {% extends 'base.admin.html.twig' %}
 
+{% block title %}Unités{% endblock %}
+
 {% block body %}
 
-<h1>Unités</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2>Ajouter une unité</h2>
+    <h1>⚖️ Unités de mesure</h1>
 
-<form method="post" action="{{ path('unitee_add') }}">
-    <input type="text" name="nom" placeholder="Ex: g, kg, ml..." required>
-    <button>Ajouter</button>
-</form>
+</div>
 
-<hr>
+{# ================= AJOUT ================= #}
+<div class="admin-card mb-4">
 
-<h2>Liste</h2>
+    <h3>➕ Ajouter une unité</h3>
 
-<ul>
-    {% for unitee in unitees %}
-        <li>
-            {{ unitee.nom }}
+    <form method="post"
+          action="{{ path('unitee_add') }}"
+          class="d-flex gap-2">
 
-            <form method="post" action="{{ path('unitee_delete', {id: unitee.id}) }}" style="display:inline;">
-                <button onclick="return confirm('Supprimer ?')">❌</button>
-            </form>
-        </li>
-    {% else %}
-        <li>Aucune unité</li>
-    {% endfor %}
-</ul>
+        <input type="text"
+               name="nom"
+               class="form-control"
+               placeholder="Ex: g, kg, ml..."
+               required>
+
+        <button class="btn btn-primary">
+            Ajouter
+        </button>
+
+    </form>
+
+</div>
+
+{# ================= LISTE ================= #}
+<div class="admin-card">
+
+    <h3>📋 Liste des unités</h3>
+
+    <table class="table align-middle">
+
+        <thead>
+            <tr>
+                <th >Nom</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for unitee in unitees %}
+
+            <tr data-nom="{{ unitee.nom|lower }}">
+
+                <td>
+                    <span class="badge bg-secondary">
+                        {{ unitee.nom }}
+                    </span>
+                </td>
+
+                <td class="text-end">
+
+                    <form method="post"
+                          action="{{ path('unitee_delete', {id: unitee.id}) }}"
+                          onsubmit="return confirm('Supprimer cette unité ?');"
+                          style="display:inline;">
+
+                        <button class="btn btn-sm btn-outline-danger">
+                            ❌ Supprimer
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+        {% else %}
+
+            <tr>
+                <td colspan="2" class="text-center text-muted py-4">
+                    Aucune unité
+                </td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
 
 {% endblock %}
