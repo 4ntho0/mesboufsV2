@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Mes Boufs !{% endblock %}</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        {% block stylesheets %}{% endblock %}
+        {% block javascripts %}{% endblock %}
+    </head>
+
+    <body>
+
+        <!-- ================= NAVBAR ADMIN ================= -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+            <div class="container-fluid">
+
+                <a class="navbar-brand" href="{{ path('recettes') }}">
+                    Mes Boufs Admin
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="adminNavbar">
+
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.get('_route') == 'recettes' ? 'active' : '' }}"
+                               href="{{ path('recettes') }}">
+                                Recettes
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.get('_route') == 'produit' ? 'active' : '' }}"
+                               href="{{ path('produit') }}">
+                                Produits
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.get('_route') == 'categorie_recette' ? 'active' : '' }}"
+                               href="{{ path('categorie_recette') }}">
+                                Catégorie Recette
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.get('_route') == 'categorie_produit' ? 'active' : '' }}"
+                               href="{{ path('categorie_produit') }}">
+                                Catégories Produit
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.get('_route') == 'unitee' ? 'active' : '' }}"
+                               href="{{ path('unitee') }}">
+                                Unitées
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+
+        <!-- ================= CONTENU ================= -->
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
+
+        <!-- ================= SCRIPTS ================= -->
+        <link rel="stylesheet" href="{{ asset('css/recettes.css') }}">
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+</html>

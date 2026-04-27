@@ -1,94 +1,163 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.admin.html.twig' %}
 
 {% block title %}Gestion recette{% endblock %}
 
 {% block body %}
 
-<h1>{{ recette.nom }}</h1>
+    <h1>{{ recette.nom }}</h1>
 
-<hr>
+    <hr>
 
-{# ================= INGREDIENTS ================= #}
+    {# ================= INGREDIENTS ================= #}
 
-<h2>Ajouter un ingrédient</h2>
+    <h2>Ajouter un ingrédient</h2>
 
-<form method="POST" action="{{ path('recette_add_ingredient', {id: recette.id}) }}">
+    <form method="POST" action="{{ path('recette_add_ingredient', {id: recette.id}) }}">
 
-    <div>
-        <label>Produit</label>
-        <select name="produit" required>
-            {% for p in produits %}
-                <option value="{{ p.id }}">{{ p.nom }}</option>
+        <div>
+            <label>Catégorie</label>
+            <select id="categorie-select">
+                <option value="">-- Choisir --</option>
+                {% for c in categoriesProduits %}
+                    <option value="{{ c.id }}">{{ c.nom }}</option>
+                {% endfor %}
+            </select>
+
+        </div>
+
+        <div>
+            <select name="produit" id="produit-select">
+                <option value="">-- Choisir une catégorie --</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Quantité</label>
+            <input type="number" step="0.01" name="quantite" required>
+        </div>
+
+        <div>
+            <label>Unité</label>
+            <select name="unitee">
+                {% for u in unitees %}
+                    <option value="{{ u.id }}">{{ u.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit">Ajouter</button>
+    </form>
+
+    <hr>
+
+    <h3>Ingrédients actuels</h3>
+
+    <ul>
+        {% for ing in recette.ingredients %}
+            <li>
+                {{ ing.quantite }} {{ ing.unitee.nom }} - {{ ing.produit.nom }}
+
+                <form method="POST"
+                      action="{{ path('recette_delete_ingredient', {id: ing.id}) }}"
+                      style="display:inline;">
+
+                    <button type="submit">
+                        ❌
+                    </button>
+                </form>
+            </li>
+        {% else %}
+            <li>Aucun ingrédient</li>
             {% endfor %}
-        </select>
-    </div>
+    </ul>
 
-    <div>
-        <label>Quantité</label>
-        <input type="number" step="0.01" name="quantite" required>
-    </div>
+    <hr>
 
-    <div>
-        <label>Unité</label>
-        <select name="unitee">
-            {% for u in unitees %}
-                <option value="{{ u.id }}">{{ u.nom }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    {# ================= NOTES ================= #}
 
-    <button type="submit">Ajouter</button>
-</form>
+    <h2>Notes de la recette</h2>
 
-<hr>
+    <form method="POST" action="{{ path('recette_save_note', {id: recette.id}) }}">
 
-<h3>Ingrédients actuels</h3>
+        <div>
+            <label>Aspect</label>
+            <input type="number" name="noteAspect" min="0" max="10" value="{{ recette.note ? recette.note.noteAspect : '' }}">
+        </div>
 
-<ul>
-    {% for ing in recette.ingredients %}
-        <li>
-            {{ ing.quantite }} {{ ing.unitee.nom }} - {{ ing.produit.nom }}
-        </li>
-    {% else %}
-        <li>Aucun ingrédient</li>
-    {% endfor %}
-</ul>
+        <div>
+            <label>Odeur</label>
+            <input type="number" name="noteOdeur" min="0" max="10" value="{{ recette.note ? recette.note.noteOdeur : '' }}">
+        </div>
 
-<hr>
+        <div>
+            <label>Goût</label>
+            <input type="number" name="noteGout" min="0" max="10" value="{{ recette.note ? recette.note.noteGout : '' }}">
+        </div>
 
-{# ================= NOTES ================= #}
+        <div>
+            <label>Texture</label>
+            <input type="number" name="noteTexture" min="0" max="10" value="{{ recette.note ? recette.note.noteTexture : '' }}">
+        </div>
 
-<h2>Notes de la recette</h2>
+        <button type="submit">
+            Enregistrer tout
+        </button>
+    </form>
 
-<form method="POST" action="{{ path('recette_save_note', {id: recette.id}) }}">
+    <hr>
 
-    <div>
-        <label>Aspect</label>
-        <input type="number" name="noteAspect" min="0" max="10" value="{{ recette.note ? recette.note.noteAspect : '' }}">
-    </div>
+    <a href="{{ path('recettes') }}">← Retour</a>
 
-    <div>
-        <label>Odeur</label>
-        <input type="number" name="noteOdeur" min="0" max="10" value="{{ recette.note ? recette.note.noteOdeur : '' }}">
-    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
 
-    <div>
-        <label>Goût</label>
-        <input type="number" name="noteGout" min="0" max="10" value="{{ recette.note ? recette.note.noteGout : '' }}">
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
 
-    <div>
-        <label>Texture</label>
-        <input type="number" name="noteTexture" min="0" max="10" value="{{ recette.note ? recette.note.noteTexture : '' }}">
-    </div>
+            const categorieSelect = document.getElementById('categorie-select');
+            const produitSelect = document.getElementById('produit-select');
 
-    <button type="submit">
-    Enregistrer tout
-</button>
-</form>
+            categorieSelect.addEventListener('change', function () {
 
-<hr>
+                const categorieId = this.value;
 
-<a href="{{ path('recettes') }}">← Retour</a>
+                if (!categorieId) {
+                    produitSelect.innerHTML = '<option>Choisir une catégorie</option>';
+                    return;
+                }
+
+                const urlTemplate = "{{ path('produits_by_categorie', {'id': 'ID'}) }}";
+                const url = urlTemplate.replace('ID', categorieId);
+
+                produitSelect.innerHTML = '<option>Chargement...</option>';
+
+                fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+
+                            console.log("DATA:", data); // 🔥 debug
+
+                            produitSelect.innerHTML = '';
+
+                            data.forEach(produit => {
+                                const option = document.createElement('option');
+                                option.value = produit.id;
+                                option.textContent = produit.nom;
+                                produitSelect.appendChild(option);
+                            });
+
+                            if (data.length === 0) {
+                                produitSelect.innerHTML = '<option>Aucun produit</option>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Erreur:", error);
+                        });
+
+            });
+
+        });
+    </script>
 
 {% endblock %}

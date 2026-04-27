@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.admin.html.twig' %}
 
 {% block title %}Recettes{% endblock %}
 
@@ -56,15 +56,20 @@
 
                     <td>
                         {# MODIFIER (à créer plus tard) #}
-                        <a href="#" class="btn btn-warning">Modifier</a>
+                        <a href="{{ path('recette_edit', {id: recette.id}) }}">
+                            Modifier
+                        </a>
 
                         {# SUPPRIMER #}
                         <form method="POST"
-                              action="#"
-                              style="display:inline"
-                              onsubmit="return confirm('Supprimer cette recette ?');">
+                              action="{{ path('recette_delete', {id: recette.id}) }}"
+                              onsubmit="return confirm('Supprimer cette recette ?');"
+                              style="display:inline;">
 
-                            <button type="submit">Supprimer</button>
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Supprimer
+                            </button>
+
                         </form>
                     </td>
                 </tr>
