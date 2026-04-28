@@ -8,7 +8,7 @@
 
         <h1>🍽 Gestion des recettes</h1>
 
-        <a href="{{ path('recette_add_page') }}" class="btn btn-primary">
+        <a href="{{ path('admin.recette_add_page') }}" class="btn btn-primary">
             + Ajouter une recette
         </a>
 
@@ -72,18 +72,18 @@
 
                         <td class="text-end">
 
-                            <a href="{{ path('recette_edit', {id: recette.id}) }}"
+                            <a href="{{ path('admin.recette_edit', {id: recette.id}) }}"
                                class="btn btn-sm btn-outline-primary">
                                 ✏️ Modifier
                             </a>
 
-                            <a href="{{ path('recette_manage', {id: recette.id}) }}"
+                            <a href="{{ path('admin.recette_manage', {id: recette.id}) }}"
                                class="btn btn-sm btn-outline-success">
                                 ⚙️ Gérer
                             </a>
 
                             <form method="POST"
-                                  action="{{ path('recette_delete', {id: recette.id}) }}"
+                                  action="{{ path('admin.recette_delete', {id: recette.id}) }}"
                                   onsubmit="return confirm('Supprimer cette recette ?');"
                                   style="display:inline;">
 

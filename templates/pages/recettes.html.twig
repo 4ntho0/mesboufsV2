@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des recettes{% endblock %}
+
+{% block body %}
+    {% set cats = app.request.get('categories') %}
+    <h1>📋 Toutes les recettes</h1>
+    <form method="GET">
+
+        <h3>Catégories</h3>
+
+        {% for cat in categories %}
+            <label>
+                <input type="checkbox"
+                       name="categories[]"
+                       value="{{ cat.id }}"
+                       {% if cat.id in selectedCategories %}checked{% endif %}>
+                {{ cat.nom }}
+            </label>
+        {% endfor %}
+
+        <button type="submit">
+            Filtrer
+        </button>
+
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <input type="hidden" name="direction" value="{{ direction }}">
+
+    </form>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>
+                    <a href="?sort=nom&direction={{ direction == 'ASC' ? 'DESC' : 'ASC' }}
+                       {% for c in cats %}
+                           &categories[]={{ c }}
+                       {% endfor %}">
+                        Nom
+                    </a>
+                </th>
+                <th>
+                    <a >
+                        Catégorie
+                    </a>
+                </th>
+
+                <th>
+                    <a href="?sort=duree&direction={{ direction == 'ASC' ? 'DESC' : 'ASC' }}
+                       {% for c in cats %}
+                           &categories[]={{ c }}
+                       {% endfor %}">
+                        Durée
+                    </a>
+                </th>
+
+                <th>
+                    <a href="?sort=note&direction={{ direction == 'ASC' ? 'DESC' : 'ASC' }}
+                       {% for c in cats %}
+                           &categories[]={{ c }}
+                       {% endfor %}">
+                        Note
+                    </a>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for recette in recettes %}
+                <tr>
+                    <td>{{ recette.nom }}</td>
+
+                    <td>
+                        {% if recette.duree %}
+                            {{ recette.duree }} min
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if recette.categories|length > 0 %}
+                            {% for cat in recette.categories %}
+                                {{ cat.nom }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if recette.note %}
+                            {{ recette.note.total }}/40
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" style="text-align:center;">
+                        Aucune recette trouvée
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+{% endblock %}

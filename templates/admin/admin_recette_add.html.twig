@@ -8,7 +8,7 @@
 
         <h1>🍽 Créer une recette</h1>
 
-        <a href="{{ path('recettes') }}" class="btn btn-outline-secondary">
+        <a href="{{ path('admin.recettes') }}" class="btn btn-outline-secondary">
             ← Retour
         </a>
 
@@ -16,7 +16,7 @@
 
     <div class="admin-card">
 
-        <form method="POST" action="{{ path('recette_add') }}">
+        <form method="POST" action="{{ path('admin.recette_add') }}">
 
             {# NOM #}
             <div class="mb-3">

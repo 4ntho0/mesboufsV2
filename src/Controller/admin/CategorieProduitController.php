@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\admin;
 
 use App\Entity\CategorieProduit;
 use Doctrine\ORM\EntityManagerInterface;

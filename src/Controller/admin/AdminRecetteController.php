@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\admin;
 
 use App\Entity\Recette;
 use App\Entity\CategorieRecette;
@@ -15,12 +15,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RecetteController extends AbstractController {
+class AdminRecetteController extends AbstractController {
 
     // ======================================================
     // RECETTES - LISTE
     // ======================================================
-    #[Route('/admin/recettes', name: 'recettes')]
+    #[Route('/admin/recettes', name: 'admin.recettes')]
     public function index(EntityManagerInterface $em): Response {
         return $this->render('admin/admin_recettes.html.twig', [
                     'recettes' => $em->getRepository(Recette::class)->findAll(),
@@ -30,14 +30,14 @@ class RecetteController extends AbstractController {
     // ======================================================
     // RECETTES - CREATE
     // ======================================================
-    #[Route('/admin/recette/add-page', name: 'recette_add_page')]
+    #[Route('/admin/recette/add-page', name: 'admin.recette_add_page')]
     public function addPage(EntityManagerInterface $em): Response {
         return $this->render('admin/admin_recette_add.html.twig', [
                     'categories' => $em->getRepository(CategorieRecette::class)->findAll(),
         ]);
     }
 
-    #[Route('/admin/recette/add', name: 'recette_add', methods: ['POST'])]
+    #[Route('/admin/recette/add', name: 'admin.recette_add', methods: ['POST'])]
     public function add(Request $request, EntityManagerInterface $em): Response {
         $recette = new Recette();
         $recette->setNom($request->request->get('nom'));
@@ -58,7 +58,7 @@ class RecetteController extends AbstractController {
         $em->persist($recette);
         $em->flush();
 
-        return $this->redirectToRoute('recette_manage', [
+        return $this->redirectToRoute('admin.recette_manage', [
                     'id' => $recette->getId()
         ]);
     }
@@ -66,7 +66,7 @@ class RecetteController extends AbstractController {
     // ======================================================
     // RECETTES - DELETE
     // ======================================================
-    #[Route('/admin/recette/{id}/delete', name: 'recette_delete', methods: ['POST'])]
+    #[Route('/admin/recette/{id}/delete', name: 'admin.recette_delete', methods: ['POST'])]
     public function deleteRecette(int $id, EntityManagerInterface $em): Response {
         $recette = $em->getRepository(Recette::class)->find($id);
 
@@ -75,13 +75,13 @@ class RecetteController extends AbstractController {
             $em->flush();
         }
 
-        return $this->redirectToRoute('recettes');
+        return $this->redirectToRoute('admin.recettes');
     }
 
     // ======================================================
     // WORKFLOW - PAGE GESTION (STEP 2)
     // ======================================================
-    #[Route('/admin/recette/{id}/manage', name: 'recette_manage')]
+    #[Route('/admin/recette/{id}/manage', name: 'admin.recette_manage')]
     public function manage(int $id, EntityManagerInterface $em): Response {
         return $this->render('admin/admin_recette_note_ingredient.html.twig', [
                     'recette' => $em->getRepository(Recette::class)->find($id),
@@ -91,7 +91,7 @@ class RecetteController extends AbstractController {
         ]);
     }
 
-    #[Route('/admin/recette/{id}/edit', name: 'recette_edit')]
+    #[Route('/admin/recette/{id}/edit', name: 'admin.recette_edit')]
     public function edit(int $id, EntityManagerInterface $em): Response {
         return $this->render('admin/admin_recette_update.html.twig', [
                     'recette' => $em->getRepository(Recette::class)->find($id),
@@ -99,7 +99,7 @@ class RecetteController extends AbstractController {
         ]);
     }
 
-    #[Route('/admin/recette/{id}/update', name: 'recette_update', methods: ['POST'])]
+    #[Route('/admin/recette/{id}/update', name: 'admin.recette_update', methods: ['POST'])]
     public function update(int $id, Request $request, EntityManagerInterface $em): Response {
         $recette = $em->getRepository(Recette::class)->find($id);
 
@@ -120,13 +120,13 @@ class RecetteController extends AbstractController {
 
         $em->flush();
 
-        return $this->redirectToRoute('recette_manage', ['id' => $id]);
+        return $this->redirectToRoute('admin.recette_manage', ['id' => $id]);
     }
 
     // ======================================================
     // INGREDIENTS
     // ======================================================
-    #[Route('/admin/recette/{id}/ingredient/add', name: 'recette_add_ingredient', methods: ['POST'])]
+    #[Route('/admin/recette/{id}/ingredient/add', name: 'admin.recette_add_ingredient', methods: ['POST'])]
     public function addIngredient(int $id, Request $request, EntityManagerInterface $em): Response {
         $recette = $em->getRepository(Recette::class)->find($id);
 
@@ -139,10 +139,10 @@ class RecetteController extends AbstractController {
         $em->persist($ingredient);
         $em->flush();
 
-        return $this->redirectToRoute('recette_manage', ['id' => $id]);
+        return $this->redirectToRoute('admin.recette_manage', ['id' => $id]);
     }
 
-    #[Route('/admin/ingredient/{id}/delete', name: 'recette_delete_ingredient', methods: ['POST'])]
+    #[Route('/admin/ingredient/{id}/delete', name: 'admin.recette_delete_ingredient', methods: ['POST'])]
     public function deleteIngredient(int $id, EntityManagerInterface $em): Response {
         $ingredient = $em->getRepository(Ingredient::class)->find($id);
 
@@ -151,16 +151,16 @@ class RecetteController extends AbstractController {
             $em->remove($ingredient);
             $em->flush();
 
-            return $this->redirectToRoute('recette_manage', ['id' => $recetteId]);
+            return $this->redirectToRoute('admin.recette_manage', ['id' => $recetteId]);
         }
 
-        return $this->redirectToRoute('recettes');
+        return $this->redirectToRoute('admin.recettes');
     }
 
     // ======================================================
     // ⭐ NOTES
     // ======================================================
-    #[Route('/admin/recette/{id}/note/save', name: 'recette_save_note', methods: ['POST'])]
+    #[Route('/admin/recette/{id}/note/save', name: 'admin.recette_save_note', methods: ['POST'])]
     public function saveNote(int $id, Request $request, EntityManagerInterface $em): Response {
         $recette = $em->getRepository(Recette::class)->find($id);
 
@@ -179,13 +179,13 @@ class RecetteController extends AbstractController {
         $em->persist($note);
         $em->flush();
 
-        return $this->redirectToRoute('recettes');
+        return $this->redirectToRoute('admin.recettes');
     }
 
     // ======================================================
     // 🔌 API AJAX
     // ======================================================
-    #[Route('/admin/produits/by-categorie/{id}', name: 'produits_by_categorie', methods: ['GET'])]
+    #[Route('/admin/produits/by-categorie/{id}', name: 'admin.produits_by_categorie', methods: ['GET'])]
     public function getProduitsByCategorie(int $id, EntityManagerInterface $em): Response {
         $categorie = $em->getRepository(CategorieProduit::class)->find($id);
 

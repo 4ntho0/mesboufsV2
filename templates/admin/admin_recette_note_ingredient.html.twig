@@ -8,7 +8,7 @@
 
     <h1>🍽 {{ recette.nom }}</h1>
 
-    <a href="{{ path('recettes') }}" class="btn btn-outline-secondary">
+    <a href="{{ path('admin.recettes') }}" class="btn btn-outline-secondary">
         ← Retour
     </a>
 
@@ -19,7 +19,7 @@
 
     <h3>➕ Ajouter un ingrédient</h3>
 
-    <form method="POST" action="{{ path('recette_add_ingredient', {id: recette.id}) }}">
+    <form method="POST" action="{{ path('admin.recette_add_ingredient', {id: recette.id}) }}">
 
         <div class="mb-3">
             <label class="form-label">Catégorie</label>
@@ -89,7 +89,7 @@
                 </span>
 
                 <form method="POST"
-                      action="{{ path('recette_delete_ingredient', {id: ing.id}) }}"
+                      action="{{ path('admin.recette_delete_ingredient', {id: ing.id}) }}"
                       onsubmit="return confirm('Supprimer cet ingrédient ?');">
 
                     <button class="btn btn-sm btn-outline-danger">
@@ -117,7 +117,7 @@
 
     <h3>⭐ Notes de la recette</h3>
 
-    <form method="POST" action="{{ path('recette_save_note', {id: recette.id}) }}">
+    <form method="POST" action="{{ path('admin.recette_save_note', {id: recette.id}) }}">
 
         <div class="row">
 
