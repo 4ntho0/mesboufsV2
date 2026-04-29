@@ -3,108 +3,133 @@
 {% block title %}Liste des recettes{% endblock %}
 
 {% block body %}
-    {% set cats = app.request.get('categories') %}
-    <h1>📋 Toutes les recettes</h1>
-    <form method="GET">
 
-        <h3>Catégories</h3>
+<h1 class="mb-4">Toutes les recettes</h1>
+
+<!-- ================= FILTRES ================= -->
+<form method="GET" class="mb-4 p-3 bg-white shadow-sm rounded">
+
+    <h5>🔎 Filtrer par catégories</h5>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
 
         {% for cat in categories %}
-            <label>
-                <input type="checkbox"
+            <label class="form-check me-3">
+                <input class="form-check-input"
+                       type="checkbox"
                        name="categories[]"
                        value="{{ cat.id }}"
                        {% if cat.id in selectedCategories %}checked{% endif %}>
-                {{ cat.nom }}
+                <span class="form-check-label">
+                    {{ cat.nom }}
+                </span>
             </label>
         {% endfor %}
 
-        <button type="submit">
-            Filtrer
-        </button>
+    </div>
 
-        <input type="hidden" name="sort" value="{{ sort }}">
-        <input type="hidden" name="direction" value="{{ direction }}">
+    <input type="hidden" name="sort" value="{{ sort }}">
+    <input type="hidden" name="direction" value="{{ direction }}">
 
-    </form>
+    <button class="btn btn-primary btn-sm">
+        Appliquer
+    </button>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>
-                    <a href="?sort=nom&direction={{ direction == 'ASC' ? 'DESC' : 'ASC' }}
-                       {% for c in cats %}
-                           &categories[]={{ c }}
-                       {% endfor %}">
-                        Nom
-                    </a>
-                </th>
-                <th>
-                    <a >
-                        Catégorie
-                    </a>
-                </th>
+</form>
 
-                <th>
-                    <a href="?sort=duree&direction={{ direction == 'ASC' ? 'DESC' : 'ASC' }}
-                       {% for c in cats %}
-                           &categories[]={{ c }}
-                       {% endfor %}">
-                        Durée
-                    </a>
-                </th>
+<!-- ================= TABLE ================= -->
+<div class="table-responsive bg-white shadow-sm rounded">
 
-                <th>
-                    <a href="?sort=note&direction={{ direction == 'ASC' ? 'DESC' : 'ASC' }}
-                       {% for c in cats %}
-                           &categories[]={{ c }}
-                       {% endfor %}">
-                        Note
-                    </a>
-                </th>
+<table class="table table-hover mb-0">
+
+    <thead class="table-dark">
+
+        {% set newDirection = direction == 'ASC' ? 'DESC' : 'ASC' %}
+
+        <tr>
+            <th>
+                <a class="text-white text-decoration-none"
+                   href="{{ path('page_recettes', {
+                        sort: 'nom',
+                        direction: newDirection,
+                        categories: selectedCategories
+                   }) }}">
+                    Nom
+                </a>
+            </th>
+
+            <th>Catégories</th>
+
+            <th>
+                <a class="text-white text-decoration-none"
+                   href="{{ path('page_recettes', {
+                        sort: 'duree',
+                        direction: newDirection,
+                        categories: selectedCategories
+                   }) }}">
+                    Durée
+                </a>
+            </th>
+
+            <th>
+                <a class="text-white text-decoration-none"
+                   href="{{ path('page_recettes', {
+                        sort: 'note',
+                        direction: newDirection,
+                        categories: selectedCategories
+                   }) }}">
+                    Note
+                </a>
+            </th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for recette in recettes %}
+
+            <tr onclick="window.location='{{ path('page_recette', {id: recette.id}) }}'"
+                style="cursor:pointer;">
+
+                <td class="fw-semibold">
+                    {{ recette.nom }}
+                </td>
+
+                <td>
+                    {% for cat in recette.categories %}
+                        <span class="badge bg-secondary me-1">
+                            {{ cat.nom }}
+                        </span>
+                    {% endfor %}
+                </td>
+
+                <td>
+                    {{ recette.duree }} min
+                </td>
+
+                <td>
+                    {% if recette.note %}
+                        {{ recette.note.total }}/40
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+
             </tr>
-        </thead>
 
-        <tbody>
-            {% for recette in recettes %}
-                <tr>
-                    <td>{{ recette.nom }}</td>
+        {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted py-4">
+                    Aucune recette trouvée
+                </td>
+            </tr>
+        {% endfor %}
 
-                    <td>
-                        {% if recette.duree %}
-                            {{ recette.duree }} min
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
+    </tbody>
 
-                    <td>
-                        {% if recette.categories|length > 0 %}
-                            {% for cat in recette.categories %}
-                                {{ cat.nom }}{% if not loop.last %}, {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
+</table>
 
-                    <td>
-                        {% if recette.note %}
-                            {{ recette.note.total }}/40
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4" style="text-align:center;">
-                        Aucune recette trouvée
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-
-    </table>
+</div>
 
 {% endblock %}

@@ -185,7 +185,7 @@
                     return;
                 }
 
-                const urlTemplate = "{{ path('produits_by_categorie', {'id': 'ID'}) }}";
+                const urlTemplate = "{{ path('admin.produits_by_categorie', {'id': 'ID'}) }}";
                 const url = urlTemplate.replace('ID', categorieId);
 
                 produitSelect.innerHTML = '<option>Chargement...</option>';

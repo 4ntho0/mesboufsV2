@@ -66,4 +66,17 @@ class RecettesController extends AbstractController {
                     'selectedCategories' => $categoryIds
         ]);
     }
+
+    #[Route('/recette/{id}', name: 'page_recette')]
+    public function recette(int $id, EntityManagerInterface $em): Response {
+        $recette = $em->getRepository(Recette::class)->find($id);
+
+        if (!$recette) {
+            throw $this->createNotFoundException('Recette non trouvée');
+        }
+
+        return $this->render('pages/recette.html.twig', [
+                    'recette' => $recette
+        ]);
+    }
 }

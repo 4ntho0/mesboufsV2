@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ recette.nom }}{% endblock %}
+
+{% block body %}
+
+    <!-- ================= HEADER ================= -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="mb-1">{{ recette.nom }}</h1>
+
+            <div class="text-muted">
+                créé le : {{ recette.date ? recette.date|date('d/m/Y') : '-' }}
+                </br></br>Temps de préparation : {{ recette.duree ?? '-' }} min
+            </div>
+        </div>
+
+        <a href="{{ path('page_recettes') }}" class="btn btn-outline-secondary btn-sm">
+            ← Retour
+        </a>
+
+    </div>
+
+    <!-- ================= CATÉGORIES ================= -->
+    <div class="mb-4">
+
+        <h5>Catégories</h5>
+
+        {% for cat in recette.categories %}
+            <span class="badge bg-secondary me-1">
+                {{ cat.nom }}
+            </span>
+        {% else %}
+            <span class="text-muted">Aucune catégorie</span>
+        {% endfor %}
+
+    </div>
+
+    <!-- ================= INGREDIENTS ================= -->
+    <div class="card mb-4 shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="card-title">Ingrédients</h5>
+
+            {% if recette.ingredients|length > 0 %}
+
+                <ul class="list-group list-group-flush">
+
+                    {% for ing in recette.ingredients %}
+                        <li class="list-group-item">
+                            <strong>{{ ing.quantite }}</strong>
+                            {{ ing.unitee ? ing.unitee.nom : '' }}
+                            -
+                            {{ ing.produit.nom }}
+                        </li>
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+                <p class="text-muted mb-0">Aucun ingrédient</p>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- ================= INSTRUCTIONS ================= -->
+    <div class="card mb-4 shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="card-title">Instructions</h5>
+
+            <p style="white-space: pre-line;">{{ recette.instruction }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- ================= NOTE ================= -->
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="card-title">Note de la recette</h5>
+
+            {% if recette.note %}
+
+                <div class="row text-center">
+
+                    <div class="col">
+                        <strong>Aspect</strong><br>
+                        {{ recette.note.noteAspect }}/10
+                    </div>
+
+                    <div class="col">
+                        <strong>Odeur</strong><br>
+                        {{ recette.note.noteOdeur }}/10
+                    </div>
+
+                    <div class="col">
+                        <strong>Goût</strong><br>
+                        {{ recette.note.noteGout }}/10
+                    </div>
+
+                    <div class="col">
+                        <strong>Texture</strong><br>
+                        {{ recette.note.noteTexture }}/10
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="text-center fs-4">
+                    Total : {{ recette.note.total }}/40
+                </div>
+
+            {% else %}
+                <p class="text-muted">Aucune note pour cette recette</p>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+{% endblock %}

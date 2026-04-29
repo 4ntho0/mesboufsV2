@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+
+    <div style="text-align:center; padding:40px;">
+
+        <h1>Bienvenue sur MesBoufs</h1>
+
+        <p style="font-size:18px; max-width:700px; margin:auto;">
+            Consultez facilement toutes mes recettes et trouvez des idées de repas en quelques clics.
+        </p>
+
+        
+        <hr style="margin:40px 0;">
+
+        <h2>Nouveautés</h2>
+
+        <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+
+            {% for recette in dernieresRecettes %}
+                <div style="border:1px solid #ccc; padding:20px; width:250px;">
+
+                    <h3>{{ recette.nom }}</h3>
+
+                    <p>
+                        ⏱ {{ recette.duree ?? '-' }} min
+                    </p>
+
+                    <p>
+                        {% if recette.note %}
+                            ⭐ {{ recette.note.total }}/40
+                        {% else %}
+                            Pas encore notée
+                        {% endif %}
+                    </p>
+
+                    <a href="{{ path('page_recette', {id: recette.id}) }}">
+                        <button>Voir la recette</button>
+                    </a>
+
+                </div>
+            {% else %}
+                <p>Aucune recette récente</p>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
