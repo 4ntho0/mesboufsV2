@@ -20,7 +20,7 @@ class AdminRecetteController extends AbstractController {
     // ======================================================
     // RECETTES - LISTE
     // ======================================================
-    #[Route('/admin/recettes', name: 'admin.recettes')]
+    #[Route('/admin', name: 'admin.recettes')]
     public function index(EntityManagerInterface $em): Response {
         return $this->render('admin/admin_recettes.html.twig', [
                     'recettes' => $em->getRepository(Recette::class)->findAll(),
@@ -87,7 +87,8 @@ class AdminRecetteController extends AbstractController {
                     'recette' => $em->getRepository(Recette::class)->find($id),
                     'produits' => $em->getRepository(Produit::class)->findAll(),
                     'unitees' => $em->getRepository(Unitee::class)->findAll(),
-                    'categoriesProduits' => $em->getRepository(CategorieProduit::class)->findAll(),
+                    'categoriesProduits' => $em->getRepository(CategorieProduit::class)
+                            ->findBy([], ['nom' => 'ASC']),
         ]);
     }
 

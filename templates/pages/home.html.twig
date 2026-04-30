@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
 
 {% block body %}
 
@@ -12,7 +11,15 @@
             Consultez facilement toutes mes recettes et trouvez des idées de repas en quelques clics.
         </p>
 
-        
+
+        <hr style="margin:40px 0;">
+         <h2>Annonces / Infos</h2>
+        {% if annonce and annonce.info %}
+            <div style="margin:40px auto; padding:20px; max-width:700px; border:1px solid #ccc;">
+                {{ annonce.info }}
+            </div>
+        {% endif %}
+
         <hr style="margin:40px 0;">
 
         <h2>Nouveautés</h2>

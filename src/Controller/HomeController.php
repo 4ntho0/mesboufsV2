@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Recette;
+use App\Entity\Annonce;
 use App\Entity\Version;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,17 +12,21 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController {
 
-    #[Route('/home', name: 'home')]
+    #[Route('/', name: 'home')]
     public function home(EntityManagerInterface $em): Response {
         $lastVersion = $em->getRepository(Version::class)->findOneBy([], [
             'date' => 'DESC'
         ]);
+
         $dernieresRecettes = $em->getRepository(Recette::class)
                 ->findBy([], ['date' => 'DESC'], 2);
 
+        $annonce = $em->getRepository(Annonce::class)->find(1);
+
         return $this->render('pages/home.html.twig', [
                     'dernieresRecettes' => $dernieresRecettes,
-                    'lastVersion' => $lastVersion
+                    'lastVersion' => $lastVersion,
+                    'annonce' => $annonce
         ]);
     }
 

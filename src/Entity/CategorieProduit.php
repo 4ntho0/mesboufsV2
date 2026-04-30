@@ -22,6 +22,7 @@ class CategorieProduit
      * @var Collection<int, Produit>
      */
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie')]
+    #[ORM\OrderBy(['nom' => 'ASC'])]
     private Collection $produits;
 
     public function __construct()
