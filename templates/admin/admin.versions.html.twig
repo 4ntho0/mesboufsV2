@@ -1,0 +1,84 @@
+{% extends 'base.admin.html.twig' %}
+
+{% block title %}Gestion des versions{% endblock %}
+
+{% block body %}
+
+<h1 class="mb-4">🧩 Gestion des versions</h1>
+
+<div class="row">
+
+    <!-- ================= AJOUT VERSION ================= -->
+    <div class="col-md-6">
+        <div class="card shadow-soft">
+            <h4>➕ Nouvelle version</h4>
+
+            <form method="POST" action="{{ path('admin.version_add') }}">
+
+                <div class="mb-3">
+                    <label>Version</label>
+                    <input type="text" name="version" class="form-control" placeholder="ex: 1.0.0" required>
+                </div>
+
+                <div class="mb-3">
+                    <label>Titre</label>
+                    <input type="text" name="titre" class="form-control" placeholder="ex: Ajout du système de recettes" required>
+                </div>
+
+                <div class="mb-3">
+                    <label>Description</label>
+                    <textarea name="description" rows="5" class="form-control"
+                              placeholder="- Ajout des recettes&#10;- Correction bug ingrédients&#10;- Amélioration UI"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label>Date</label>
+                    <input type="date" name="date" class="form-control" required>
+                </div>
+
+                <button class="btn btn-primary w-100">
+                    ✔ Ajouter la version
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= LISTE ================= -->
+    <div class="col-md-6">
+        <div class="card shadow-soft">
+            <h4>📋 Historique</h4>
+
+            <ul class="list-group">
+
+                {% for v in versions %}
+                    <li class="list-group-item">
+
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ v.titre }}</strong>
+                            <span class="badge bg-dark">v{{ v.version }}</span>
+                        </div>
+
+                        <small class="text-muted">
+                            {{ v.date ? v.date|date('d/m/Y') : '-' }}
+                        </small>
+
+                        <div style="white-space: pre-line;" class="mt-2">
+                            {{ v.description }}
+                        </div>
+
+                    </li>
+                {% else %}
+                    <li class="list-group-item text-muted">
+                        Aucune version
+                    </li>
+                {% endfor %}
+
+            </ul>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -15,7 +15,7 @@
         {% block javascripts %}{% endblock %}
     </head>
 
-    <body>
+    <body class="d-flex flex-column min-vh-100">
 
         <!-- ================= NAVBAR PUBLIC ================= -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
@@ -67,13 +67,29 @@
         </nav>
 
         <!-- ================= CONTENU ================= -->
-        <div class="container">
+        <main class="container flex-grow-1">
             {% block body %}{% endblock %}
-        </div>
+        </main>
 
         <!-- ================= FOOTER ================= -->
-        <footer class="text-center mt-5 mb-3 text-muted">
-            <small>© Mes Boufs - {{ "now"|date("Y") }}</small>
+        <footer class="text-center mt-auto mb-3 text-muted">
+            <div class="container d-flex justify-content-between align-items-center">
+
+                <!-- GAUCHE -->
+                <div class="text-muted">
+                    <small>© Mes Boufs - {{ "now"|date("Y") }}</small>
+                </div>
+
+                <!-- DROITE -->
+                <div>
+                    {% if lastVersion %}
+                        <a href="{{ path('page_versions') }}" class="text-decoration-none text-muted">
+                            Version {{ lastVersion.version }}
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
         </footer>
 
         <!-- ================= SCRIPTS ================= -->
