@@ -42,6 +42,7 @@ class AdminRecetteController extends AbstractController {
         $recette = new Recette();
         $recette->setNom($request->request->get('nom'));
         $recette->setInstruction($request->request->get('instruction'));
+        $recette->setDescription($request->request->get('description'));
         $recette->setDate(new \DateTime());
 
         if ($request->request->get('duree')) {
@@ -104,24 +105,49 @@ class AdminRecetteController extends AbstractController {
     public function update(int $id, Request $request, EntityManagerInterface $em): Response {
         $recette = $em->getRepository(Recette::class)->find($id);
 
-        $recette->setNom($request->request->get('nom'));
-        $recette->setDuree((int) $request->request->get('duree'));
-        $recette->setInstruction($request->request->get('instruction'));
+        if (!$recette) {
+            throw $this->createNotFoundException('Recette introuvable');
+        }
 
+        // =========================
+        // CHAMPS PRINCIPAUX
+        // =========================
+        $recette->setNom(trim($request->request->get('nom')));
+        $recette->setInstruction($request->request->get('instruction') ?: null);
+        $recette->setDescription($request->request->get('description') ?: null);
+
+        // durée (gestion propre du vide)
+        $duree = $request->request->get('duree');
+        if ($duree !== null && $duree !== '') {
+            $recette->setDuree((int) $duree);
+        } else {
+            $recette->setDuree(null);
+        }
+
+        // =========================
+        // CATÉGORIES (RESET + ADD)
+        // =========================
         foreach ($recette->getCategories() as $cat) {
             $recette->removeCategory($cat);
         }
 
+        $categorieRepo = $em->getRepository(CategorieRecette::class);
+
         foreach ((array) $request->request->all('categories') as $idCat) {
-            $cat = $em->getRepository(CategorieRecette::class)->find($idCat);
+            $cat = $categorieRepo->find($idCat);
             if ($cat) {
                 $recette->addCategory($cat);
             }
         }
 
+        // =========================
+        // SAVE
+        // =========================
         $em->flush();
 
-        return $this->redirectToRoute('admin.recette_manage', ['id' => $id]);
+        return $this->redirectToRoute('admin.recette_manage', [
+                    'id' => $recette->getId()
+        ]);
     }
 
     // ======================================================
