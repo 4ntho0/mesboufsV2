@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Recette;
 use App\Entity\Annonce;
 use App\Entity\Version;
-use App\Repository\VersionRepository;
 use App\Entity\CategorieRecette;
+use App\Repository\VersionRepository;
+use App\Repository\AnnonceRepository;
+use App\Repository\CategorieRecetteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,15 +18,19 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController {
 
     #[Route('/', name: 'home')]
-    public function home(Request $request, EntityManagerInterface $em): Response {
-// ================= VERSION + ANNONCE =================
-        $lastVersion = $em->getRepository(Version::class)->findOneBy([], [
-            'date' => 'DESC'
-        ]);
+    public function home(
+            Request $request,
+            VersionRepository $versionRepository,
+            AnnonceRepository $annonceRepository,
+            CategorieRecetteRepository $categorieRepository,
+            EntityManagerInterface $em
+    ): Response {
 
-        $annonce = $em->getRepository(Annonce::class)->find(1);
+        // ================= VERSION + ANNONCE =================
+        $lastVersion = $versionRepository->findLastVersion();
+        $annonce = $annonceRepository->find(1);
 
-// ================= FILTRES =================
+        // ================= FILTRES =================
         $sort = $request->query->get('sort', 'date');
         $direction = strtoupper($request->query->get('direction', 'DESC'));
 
@@ -34,7 +40,7 @@ class HomeController extends AbstractController {
 
         $categoryIds = $request->query->all('categories');
 
-// ================= QUERY RECETTES =================
+        // ================= QUERY RECETTES =================
         $qb = $em->createQueryBuilder()
                 ->select('DISTINCT r', 'n')
                 ->from(Recette::class, 'r')
@@ -49,22 +55,33 @@ class HomeController extends AbstractController {
                     ->setParameter('nbCats', count($categoryIds));
         }
 
-// ================= TRI =================
-        if ($sort === 'duree') {
-            $qb->orderBy('r.duree', $direction);
-        } elseif ($sort === 'note') {
-            $qb->addSelect(
-                    '(COALESCE(n.noteAspect,0) + COALESCE(n.noteOdeur,0) + COALESCE(n.noteGout,0) + COALESCE(n.noteTexture,0)) AS HIDDEN totalNote'
-            )->orderBy('totalNote', $direction);
-        } elseif ($sort === 'nom') {
-            $qb->orderBy('r.nom', $direction);
-        } else {
-            $qb->orderBy('r.date', 'DESC');
+        // ================= TRI =================
+        switch ($sort) {
+            case 'duree':
+                $qb->orderBy('r.duree', $direction);
+                break;
+
+            case 'note':
+                $qb->addSelect(
+                        '(COALESCE(n.noteAspect,0) + COALESCE(n.noteOdeur,0) + COALESCE(n.noteGout,0) + COALESCE(n.noteTexture,0)) AS HIDDEN totalNote'
+                )->orderBy('totalNote', $direction);
+                break;
+
+            case 'nom':
+                $qb->orderBy('r.nom', $direction);
+                break;
+
+            default:
+                $qb->orderBy('r.date', 'DESC');
+                break;
         }
 
+        $recettes = $qb->getQuery()->getResult();
+
+        // ================= RENDER =================
         return $this->render('pages/home.html.twig', [
-                    'recettes' => $qb->getQuery()->getResult(),
-                    'categories' => $em->getRepository(CategorieRecette::class)->findAll(),
+                    'recettes' => $recettes,
+                    'categories' => $categorieRepository->findAll(),
                     'selectedCategories' => $categoryIds,
                     'sort' => $sort,
                     'direction' => $direction,
@@ -83,7 +100,10 @@ class HomeController extends AbstractController {
     }
 
     #[Route('/recette/{id}', name: 'page_recette')]
-    public function recette(int $id, EntityManagerInterface $em): Response {
+    public function recette(
+            int $id,
+            EntityManagerInterface $em
+    ): Response {
         $recette = $em->getRepository(Recette::class)->find($id);
 
         if (!$recette) {
