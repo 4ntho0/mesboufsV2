@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Recette;
 use App\Entity\Annonce;
 use App\Entity\Version;
+use App\Repository\VersionRepository;
 use App\Entity\CategorieRecette;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -73,10 +74,8 @@ class HomeController extends AbstractController {
     }
 
     #[Route('/versions', name: 'page_versions')]
-    public function versions(EntityManagerInterface $em): Response {
-        $versions = $em->getRepository(Version::class)->findBy([], [
-            'date' => 'DESC'
-        ]);
+    public function versions(VersionRepository $versionRepository): Response {
+        $versions = $versionRepository->findAllSortedByVersionDesc();
 
         return $this->render('pages/versions.html.twig', [
                     'versions' => $versions

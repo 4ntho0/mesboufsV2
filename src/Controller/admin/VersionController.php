@@ -3,6 +3,7 @@
 namespace App\Controller\admin;
 
 use App\Entity\Version;
+use App\Repository\VersionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,10 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class VersionController extends AbstractController {
 
     #[Route('/admin/versions', name: 'admin.versions')]
-    public function index(EntityManagerInterface $em): Response {
-        $versions = $em->getRepository(Version::class)->findBy([], [
-            'date' => 'DESC'
-        ]);
+    public function index(VersionRepository $versionRepository): Response {
+        $versions = $versionRepository->findAllSortedByVersionDesc();
 
         return $this->render('admin/admin.versions.html.twig', [
                     'versions' => $versions
