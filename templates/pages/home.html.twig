@@ -1,61 +1,143 @@
 {% extends 'base.html.twig' %}
 
-
 {% block body %}
 
-    <div style="text-align:center; padding:40px;">
+    <!-- ================= HERO ================= -->
+    <section class="text-center py-4 mb-3">
 
-        <h1>Bienvenue sur MesBoufs</h1>
+        <h1 class="mb-2">MesBoufs</h1>
 
-        <p style="font-size:18px; max-width:700px; margin:auto;">
-            Consultez facilement toutes mes recettes et trouvez des idées de repas en quelques clics.
+        <p class="mx-auto text-muted" style="max-width:600px;">
+            Trouve facilement des idées de repas et explore toutes les recettes.
         </p>
 
+    </section>
 
-        <hr style="margin:40px 0;">
-         <h2>Annonces / Infos</h2>
-        {% if annonce and annonce.info %}
-            <div style="margin:40px auto; padding:20px; max-width:700px; border:1px solid #ccc;">
-                {{ annonce.info }}
+    <!-- ================= ANNONCE ================= -->
+    {% if annonce and annonce.info %}
+        <section class="mb-4">
+
+            <div class="card shadow-soft text-center p-3">
+
+                <h2 class="h6 mb-2">Annonces / Infos</h2>
+
+                <p class="mb-0" style="white-space: pre-line;">
+                    {{ annonce.info }}
+                </p>
+
             </div>
-        {% endif %}
 
-        <hr style="margin:40px 0;">
+        </section>
+    {% endif %}
 
-        <h2>Nouveautés</h2>
+    <!-- ================= FILTRES ================= -->
+    <section class="mb-4">
 
-        <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+        <div class="card p-3 shadow-sm">
 
-            {% for recette in dernieresRecettes %}
-                <div style="border:1px solid #ccc; padding:20px; width:250px;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h6 mb-0">🔎 Filtres</h2>
+            </div>
 
-                    <h3>{{ recette.nom }}</h3>
+            <form method="GET">
 
-                    <p>
-                        ⏱ {{ recette.duree ?? '-' }} min
-                    </p>
+                <div class="d-flex flex-wrap gap-2 mb-3">
 
-                    <p>
-                        {% if recette.note %}
-                            ⭐ {{ recette.note.total }}/40
-                        {% else %}
-                            Pas encore notée
-                        {% endif %}
-                    </p>
-
-                    <a href="{{ path('page_recette', {id: recette.id}) }}">
-                        <button>Voir la recette</button>
-                    </a>
+                    {% for cat in categories %}
+                        <label class="filter-tag">
+                            <input type="checkbox"
+                                   name="categories[]"
+                                   value="{{ cat.id }}"
+                                   {% if cat.id in selectedCategories %}checked{% endif %}>
+                            <span>{{ cat.nom }}</span>
+                        </label>
+                    {% endfor %}
 
                 </div>
-            {% else %}
-                <p>Aucune recette récente</p>
-            {% endfor %}
+
+                <input type="hidden" name="sort" value="{{ sort }}">
+                <input type="hidden" name="direction" value="{{ direction }}">
+
+
+            </form>
 
         </div>
 
+    </section>
+
+    <!-- ================= TITRE LISTE ================= -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2 class="h5 mb-0">Recettes</h2>
+
     </div>
 
-</div>
+    <!-- ================= RECETTES ================= -->
+    <div class="row g-3">
 
+        {% for recette in recettes %}
+            <div class="col-12">
+
+                <div class="card recipe-card h-100 d-flex flex-row position-relative">
+
+                    <a href="{{ path('page_recette', {id: recette.id}) }}"
+                       class="stretched-link"></a>
+
+                    <div class="recipe-img"></div>
+
+                    <div class="d-flex flex-column flex-grow-1 p-2">
+
+                        <h3 class="h6 mb-1">{{ recette.nom }}</h3>
+
+                        <div class="text-muted small mb-1 d-flex gap-3">
+                            <span>⏱ {{ recette.duree ?? '-' }} min</span>
+
+                            {% if recette.note %}
+                                <span>⭐ {{ recette.note.total }}/40</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-2">
+                            {% for categorie in recette.categories %}
+                                <span class="badge bg-light text-dark me-1">
+                                    {{ categorie.nom }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                        <p class="text-muted small mb-0">
+                            {{ recette.description|slice(0, 90) }}...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const form = document.querySelector('form');
+            let timeout;
+
+            form.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                input.addEventListener('change', () => {
+
+                    clearTimeout(timeout);
+
+                    timeout = setTimeout(() => {
+                        form.submit();
+                    }, 150); // petit délai UX
+                });
+            });
+
+        });
+    </script>
 {% endblock %}

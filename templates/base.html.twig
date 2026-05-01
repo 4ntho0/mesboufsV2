@@ -23,52 +23,8 @@
 
                 <!-- BRAND -->
                 <a class="navbar-brand fw-bold" href="{{ path('home') }}">
-                    Mes Boufs
+                    MesBoufs
                 </a>
-
-                <!-- BURGER -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNavbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- MENU -->
-                <div class="collapse navbar-collapse" id="publicNavbar">
-
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                        <!-- HOME -->
-                        <li class="nav-item">
-                            <a class="nav-link {{ app.request.get('_route') == 'home' ? 'active' : '' }}"
-                               href="{{ path('home') }}">
-                                Accueil
-                            </a>
-                        </li>
-
-                        <!-- RECETTES -->
-                        <li class="nav-item">
-                            <a class="nav-link {{ app.request.get('_route') starts with 'page_recettes' ? 'active' : '' }}"
-                               href="{{ path('page_recettes') }}">
-                                Recettes
-                            </a>
-                        </li>
-
-                        <!-- LISTE DE COURSES
-                        <li class="nav-item">
-                            <a class="nav-link {{ app.request.get('_route') == 'liste_course' ? 'active' : '' }}"
-                               href="#">
-                                Liste de courses
-                            </a>
-                        </li>-->
-                        {% if app.user %}
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="{{ path('logout') }}">
-                                    Déconnexion
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
             </div>
         </nav>
 

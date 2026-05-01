@@ -44,6 +44,9 @@ class Recette {
     #[ORM\OneToOne(mappedBy: 'recette', cascade: ['persist', 'remove'])]
     private ?Note $note = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
+
     public function __construct() {
         $this->categories = new ArrayCollection();
         $this->ingredients = new ArrayCollection();
@@ -141,6 +144,18 @@ class Recette {
                 $ingredients->setRecette(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
