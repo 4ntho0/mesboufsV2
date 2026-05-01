@@ -83,6 +83,10 @@
                     <a href="{{ path('page_recette', {id: recette.id}) }}"
                        class="stretched-link"></a>
 
+                    {% if recette.isNew %}
+                        <span class="badge-new">NEW</span>
+                    {% endif %}
+
                     <div class="recipe-img"></div>
 
                     <div class="d-flex flex-column flex-grow-1 p-2">
@@ -110,7 +114,6 @@
                         </p>
 
                     </div>
-
                 </div>
 
             </div>
