@@ -231,4 +231,41 @@ class AdminRecetteController extends AbstractController {
 
         return $this->json($data);
     }
+
+    #[Route('/admin/recette/{id}/image/upload', name: 'admin.recette_upload_image', methods: ['POST'])]
+    public function uploadImage(int $id, Request $request, EntityManagerInterface $em): Response {
+        $recette = $em->getRepository(Recette::class)->find($id);
+
+        if (!$recette) {
+            throw $this->createNotFoundException();
+        }
+
+        $file = $request->files->get('image');
+
+        if ($file && $file->isValid()) {
+
+            $filename = uniqid() . '.' . $file->guessExtension();
+
+            $file->move(
+                    $this->getParameter('kernel.project_dir') . '/public/uploads/recettes',
+                    $filename
+            );
+
+            $image = $recette->getImage();
+
+            if (!$image) {
+                $image = new \App\Entity\Image();
+            }
+
+            $image->setFilename($filename);
+            $recette->setImage($image);
+
+            $em->persist($image);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('admin.recette_manage', [
+                    'id' => $recette->getId()
+        ]);
+    }
 }

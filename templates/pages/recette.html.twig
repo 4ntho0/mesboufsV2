@@ -3,38 +3,58 @@
 
 {% block body %}
 
-    <!-- ================= HEADER ================= -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="card mb-4 shadow-sm">
 
-        <div>
-            <h1 class="mb-1">{{ recette.nom }}</h1>
+        <div class="row align-items-center">
 
-            <div class="text-muted">
-                créé le : {{ recette.date ? recette.date|date('d/m/Y') : '-' }}
-                </br></br>Temps de préparation : {{ recette.duree ?? '-' }} min
+            <!-- LEFT -->
+            <div class="col-md-8">
+
+                <h1 class="mb-2">{{ recette.nom }}</h1>
+
+                <div class="text-muted small mb-2">
+                    créé le : {{ recette.date ? recette.date|date('d/m/Y') : '-' }}
+                </div>
+
+                <div class="text-muted small mb-3">
+                    Temps de préparation : {{ recette.duree ?? '-' }} min
+                </div>
+
+                <div>
+                    {% for cat in recette.categories %}
+                        <span class="badge bg-secondary me-1">
+                            {{ cat.nom }}
+                        </span>
+                    {% else %}
+                        <span class="text-muted">Aucune catégorie</span>
+                    {% endfor %}
+                </div>
+
             </div>
+
+            <!-- RIGHT (IMAGE) -->
+            <div class="col-md-4 text-end">
+
+                <div style="width: 100%; max-width: 200px; height: 160px; margin-left: auto;">
+
+                    {% if recette.image %}
+                        <img src="{{ asset('uploads/recettes/' ~ recette.image.filename) }}"
+                             alt="{{ recette.nom }}"
+                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-light rounded">
+                            🍽
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
         </div>
 
-        <a href="{{ path('home') }}" class="btn btn-outline-secondary btn-sm">
-            ← Retour
-        </a>
-
     </div>
 
-    <!-- ================= CATÉGORIES ================= -->
-    <div class="mb-4">
-
-        <h5>Catégories</h5>
-
-        {% for cat in recette.categories %}
-            <span class="badge bg-secondary me-1">
-                {{ cat.nom }}
-            </span>
-        {% else %}
-            <span class="text-muted">Aucune catégorie</span>
-        {% endfor %}
-
-    </div>
 
     <!-- ================= INGREDIENTS ================= -->
     <div class="card mb-4 shadow-sm">
@@ -91,7 +111,7 @@
                 <div class="row text-center">
 
                     <div class="col">
-                        <strong>Aspect</strong><br>
+                        <strong>Aspect Visuel</strong><br>
                         {{ recette.note.noteAspect }}/10
                     </div>
 

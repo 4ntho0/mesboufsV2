@@ -47,6 +47,9 @@ class Recette {
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Image $image = null;
+
     public function __construct() {
         $this->categories = new ArrayCollection();
         $this->ingredients = new ArrayCollection();
@@ -164,5 +167,17 @@ class Recette {
         }
 
         return $this->date >= new \DateTimeImmutable('-30 days');
+    }
+
+    public function getImage(): ?Image
+    {
+        return $this->image;
+    }
+
+    public function setImage(?Image $image): static
+    {
+        $this->image = $image;
+
+        return $this;
     }
 }

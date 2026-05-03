@@ -111,7 +111,34 @@
     </ul>
 
 </div>
+{# ================= IMAGE ================= #}
 
+<div class="admin-card mb-4">
+
+    <h3>Image de la recette</h3>
+
+    {% if recette.image %}
+        <div class="mb-3">
+            <img src="{{ asset('uploads/recettes/' ~ recette.image.filename) }}"
+                 class="img-fluid rounded"
+                 style="max-height: 200px;">
+        </div>
+    {% endif %}
+
+    <form method="POST"
+          action="{{ path('admin.recette_upload_image', {id: recette.id}) }}"
+          enctype="multipart/form-data">
+
+        <input type="file" name="image" class="form-control mb-2" required>
+
+        <button class="btn btn-primary">
+            📤 Upload image
+        </button>
+
+    </form>
+
+</div>
+          
 {# ================= NOTES ================= #}
 <div class="admin-card mb-4">
 
