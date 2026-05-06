@@ -13,9 +13,7 @@
     --shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
-/* =========================
-   RESET
-========================= */
+/* RESET */
 * {
     box-sizing: border-box;
 }
@@ -30,15 +28,12 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-
     background: var(--bg);
     color: var(--text);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-/* =========================
-   TYPOGRAPHY
-========================= */
+/* TYPO */
 h1, h2, h3 {
     margin: 0 0 10px;
     font-weight: 700;
@@ -51,18 +46,13 @@ p {
     line-height: 1.5;
 }
 
-/* =========================
-   LAYOUT
-========================= */
+/* LAYOUT */
 main.container {
     flex: 1;
     padding: 15px;
-    max-width: 1140px;
 }
 
-/* =========================
-   NAVBAR
-========================= */
+/* NAVBAR */
 .navbar {
     background: linear-gradient(90deg, var(--primary), #111827) !important;
     padding: 12px 16px;
@@ -77,7 +67,6 @@ main.container {
 .navbar .nav-link {
     color: rgba(255,255,255,0.75) !important;
     transition: 0.2s;
-    position: relative;
 }
 
 .navbar .nav-link:hover {
@@ -88,9 +77,7 @@ main.container {
     color: var(--accent) !important;
 }
 
-/* =========================
-   CARDS BASE
-========================= */
+/* CARD */
 .card {
     background: var(--card);
     border: none;
@@ -100,16 +87,10 @@ main.container {
     padding: 16px;
 }
 
-.card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.10);
-}
-
-/* =========================
-   RECIPE CARD
-========================= */
+/* RECIPE CARD */
 .recipe-card {
     display: flex;
+    height: 100%;
     gap: 14px;
     align-items: stretch;
     border-radius: var(--radius);
@@ -124,34 +105,35 @@ main.container {
 .recipe-card:active {
     transform: scale(0.98);
 }
+
 .recipe-card .stretched-link {
     position: absolute;
     inset: 0;
     z-index: 1;
 }
 
-/* CLICK AREA FULL CARD */
+.recipe-card > div:last-child {
+    min-width: 0;
+}
+
 .recipe-clickable {
     cursor: pointer;
     position: relative;
 }
+
+/* BADGE NEW */
 .badge-new {
     position: absolute;
     top: 10px;
     right: 10px;
-
     background: #f59e0b;
     color: #111827;
-
     font-size: 0.7rem;
     font-weight: 700;
-
     padding: 4px 8px;
     border-radius: 999px;
-
     z-index: 5;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-
     animation: popIn 0.3s ease;
 }
 
@@ -165,17 +147,12 @@ main.container {
         opacity: 1;
     }
 }
-/* =========================
-   IMAGE
-========================= */
+
+/* IMAGE */
 .recipe-img {
-    width: 120px;
-    min-width: 120px;
-    height: 110px;
     border-radius: 12px;
     overflow: hidden;
     background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-
     flex-shrink: 0;
 }
 
@@ -183,21 +160,18 @@ main.container {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
 }
 
-.recipe-card > div:last-child {
-    min-width: 0;
-    flex: 1;
-}
-
-
-/* =========================
-   TEXT
-========================= */
+/* TEXT */
 .recipe-title {
     font-size: 1rem;
     font-weight: 700;
+}
+
+.recipe-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .recipe-meta {
@@ -205,9 +179,7 @@ main.container {
     color: var(--muted);
 }
 
-/* =========================
-   BADGES
-========================= */
+/* BADGES */
 .badge {
     font-size: 0.75rem;
     background: #f3f4f6 !important;
@@ -215,20 +187,15 @@ main.container {
     border-radius: 8px;
 }
 
-/* =========================
-   FILTER TAGS (SAFE)
-========================= */
+/* FILTER */
 .filter-tag {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
     padding: 6px 10px;
     border-radius: 20px;
-
     background: #f3f4f6;
     font-size: 0.85rem;
-
     cursor: pointer;
     user-select: none;
     transition: 0.2s;
@@ -243,15 +210,12 @@ main.container {
     opacity: 0;
 }
 
-/* checked */
 .filter-tag input:checked + span {
     color: var(--accent);
     font-weight: 600;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* BUTTON */
 .btn {
     border-radius: 10px !important;
     font-weight: 500;
@@ -266,28 +230,120 @@ main.container {
     background: #d97706;
 }
 
-/* =========================
-   FORM FOCUS CLEAN
-========================= */
-input,
-select,
-textarea {
+/* FORM */
+input, select, textarea {
     border-radius: 10px !important;
     border: 1px solid #d1d5db !important;
     padding: 10px;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
+input:focus, select:focus, textarea:focus {
     border-color: var(--accent) !important;
     box-shadow: 0 0 0 2px rgba(245,158,11,0.2);
     outline: none;
 }
 
 /* =========================
-   TABLES
+   ANNOUNCEMENT
 ========================= */
+.announcement-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    background: linear-gradient(135deg, #eff6ff, #f8fbff);
+    border-radius: 16px;
+    padding: 16px;
+
+    border: 1px solid #dbeafe;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+
+    position: relative;
+    overflow: hidden;
+
+    animation: fadeIn 0.4s ease;
+}
+
+/* BARRE DROITE */
+.announcement-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background: linear-gradient(
+        to bottom,
+        #60a5fa,
+        #2563eb
+        );
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+/* ICON */
+.announcement-icon {
+    box-shadow: 0 4px 10px rgba(59,130,246,0.15);
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-radius: 50%;
+
+    font-size: 1.2rem;
+}
+
+/* CONTENT */
+.announcement-content {
+    flex: 1;
+}
+
+.announcement-content strong {
+    display: block;
+    font-size: 0.95rem;
+    color: #1e3a8a;
+}
+
+.announcement-content p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: #1f2937;
+}
+
+/* CLOSE BUTTON */
+.announcement-close {
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: 0.2s;
+}
+
+.announcement-close:hover {
+    color: #111827;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* TABLE */
 table {
     width: 100%;
     background: white;
@@ -300,68 +356,9 @@ table {
     color: white !important;
 }
 
-/* =========================
-   FOOTER
-========================= */
+/* FOOTER */
 footer {
     background: var(--card);
     border-top: 1px solid #e5e7eb;
     padding: 15px;
-    text-align: center;
-}
-
-/* =========================
-   MOBILE FIRST
-========================= */
-@media (max-width: 576px) {
-
-    main.container {
-        padding: 10px;
-    }
-
-    h1 {
-        font-size: 1.8rem;
-    }
-
-    h2 {
-        font-size: 1.4rem;
-    }
-
-    /* FULL WIDTH CARDS */
-    .col-12 {
-        padding: 0;
-    }
-
-    .recipe-card {
-        flex-direction: row;
-        width: 100%;
-    }
-
-    .recipe-img {
-        width: 100px;
-        min-width: 100px;
-        height: 100px;
-    }
-
-    .filter-tag {
-        font-size: 0.75rem;
-    }
-
-    .btn-mobile-full {
-        width: 100%;
-    }
-}
-
-/* =========================
-   DESKTOP
-========================= */
-@media (min-width: 992px) {
-
-    main.container {
-        max-width: 1140px;
-    }
-
-    .recipe-card {
-        padding: 18px;
-    }
 }
