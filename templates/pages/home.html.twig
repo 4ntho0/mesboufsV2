@@ -34,7 +34,7 @@
 
             <form method="GET" id="filter-form">
                 Catégories
-                <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="category-scroll d-flex gap-2 mb-3">
                     {% for cat in categories %}
                         <label class="filter-tag">
                             <input type="checkbox"
@@ -58,68 +58,9 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="h5 mb-0">Recettes</h2>
     </div>
+    {% include 'pages/_recettes.html.twig' %}
 
-    <!-- ================= GRID ================= -->
-    <div class="recipe-grid">
 
-        {% for recette in recettes %}
-            <div class="recipe-item">
-
-                <div class="card recipe-card recipe-clickable h-100">
-
-                    <a href="{{ path('page_recette', {id: recette.id}) }}"
-                       class="stretched-link"></a>
-
-                    {% if recette.isNew %}
-                        <span class="badge-new">NEW</span>
-                    {% endif %}
-
-                    <!-- IMAGE -->
-                    <div class="recipe-img">
-                        {% if recette.image %}
-                            <img src="{{ asset('uploads/recettes/' ~ recette.image.filename) }}"
-                                 alt="{{ recette.nom }}">
-                        {% else %}
-                            <img src="{{ asset('images/default.jpg') }}"
-                                 alt="image par défaut">
-                        {% endif %}
-                    </div>
-
-                    <!-- CONTENT -->
-                    <div class="recipe-content d-flex flex-column flex-grow-1 p-2">
-
-                        <h3 class="recipe-title mb-1">
-                            {{ recette.nom }}
-                        </h3>
-
-                        <div class="recipe-meta mb-1 d-flex gap-3">
-                            <span>⏱ {{ recette.duree ?? '-' }} min</span>
-
-                            {% if recette.note %}
-                                <span>⭐ {{ recette.note.total }}/40</span>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-2">
-                            {% for categorie in recette.categories %}
-                                <span class="badge">
-                                    {{ categorie.nom }}
-                                </span>
-                            {% endfor %}
-                        </div>
-
-                        <p class="text-muted small mb-0">
-                            {{ recette.description|nl2br|raw }}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-        {% endfor %}
-
-    </div>
 
 {% endblock %}
 {% block javascripts %}
@@ -127,38 +68,69 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             const form = document.getElementById('filter-form');
-            if (!form)
+            const container = document.getElementById('recipes-container');
+
+            if (!form || !container)
                 return;
 
             let timeout;
 
-            form.querySelectorAll('input[type="checkbox"]').forEach(input => {
-                input.addEventListener('change', () => {
+            function attachFilters() {
 
-                    clearTimeout(timeout);
+                form.querySelectorAll('input[type="checkbox"]').forEach(input => {
 
-                    timeout = setTimeout(() => {
-                        form.submit();
-                    }, 150);
+                    input.addEventListener('change', () => {
+
+                        clearTimeout(timeout);
+
+                        timeout = setTimeout(() => {
+
+                            const formData = new FormData(form);
+                            const params = new URLSearchParams(formData);
+
+                            container.style.opacity = "0.5";
+
+                            fetch(window.location.pathname + '?' + params.toString(), {
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                                    .then(res => res.text())
+                                    .then(html => {
+
+                                        const parser = new DOMParser();
+                                        const doc = parser.parseFromString(html, 'text/html');
+
+                                        const newContent = doc.getElementById('recipes-container');
+
+                                        if (newContent) {
+                                            container.innerHTML = newContent.innerHTML;
+                                        }
+
+                                        container.style.opacity = "1";
+
+                                        // 🔥 REBIND EVENTS après update
+                                        attachFilters();
+
+                                    });
+
+                        }, 150);
+                    });
+
                 });
-            });
+            }
+
+            attachFilters();
 
         });
-
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function () {
 
             const closeBtn = document.getElementById('close-announcement');
             const announcement = document.getElementById('announcement');
 
             if (closeBtn && announcement) {
-                closeBtn.addEventListener('click', () => {
-                    announcement.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-                    announcement.style.opacity = "0";
-                    announcement.style.transform = "translateY(-10px)";
-
-                    setTimeout(() => {
-                        announcement.remove();
-                    }, 300);
+                closeBtn.addEventListener('click', function () {
+                    announcement.style.display = 'none';
                 });
             }
 

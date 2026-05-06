@@ -61,7 +61,8 @@ main.container {
 
 .navbar-brand {
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size: 2rem;
+    font-family: monaco;
 }
 
 .navbar .nav-link {
@@ -188,6 +189,31 @@ main.container {
 }
 
 /* FILTER */
+.category-scroll {
+    display: flex;
+    flex-wrap: nowrap;      /* empêche les retours à la ligne */
+    overflow-x: auto;       /* scroll horizontal */
+    overflow-y: hidden;
+    gap: 10px;
+    padding-bottom: 5px;
+    -webkit-overflow-scrolling: touch; /* smooth iOS */
+}
+
+/* empêche les tags de se compresser */
+.category-scroll .filter-tag {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* optionnel: scrollbar plus propre */
+.category-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+
+.category-scroll::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 10px;
+}
 .filter-tag {
     display: inline-flex;
     align-items: center;
@@ -269,7 +295,7 @@ input:focus, select:focus, textarea:focus {
     content: "";
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
 
     width: 4px;
     height: 100%;

@@ -1,0 +1,55 @@
+<div class="recipe-grid" id="recipes-container">
+    {% for recette in recettes %}
+        <div class="recipe-item">
+            <div class="card recipe-card recipe-clickable h-100">
+
+                <a href="{{ path('page_recette', {id: recette.id}) }}"
+                   class="stretched-link"></a>
+
+                {% if recette.isNew %}
+                    <span class="badge-new">NEW</span>
+                {% endif %}
+
+                <!-- IMAGE -->
+                <div class="recipe-img">
+                    {% if recette.image %}
+                        <img src="{{ asset('uploads/recettes/' ~ recette.image.filename) }}"
+                             alt="{{ recette.nom }}">
+                    {% endif %}
+                </div>
+
+                <!-- CONTENT -->
+                <div class="recipe-content d-flex flex-column flex-grow-1 p-2">
+
+                    <h3 class="recipe-title mb-1">
+                        {{ recette.nom }}
+                    </h3>
+
+                    <div class="recipe-meta mb-1 d-flex gap-3">
+                        <span>⏱ {{ recette.duree ?? '-' }} min</span>
+
+                        {% if recette.note %}
+                            <span>⭐ {{ recette.note.total }}/40</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-2">
+                        {% for categorie in recette.categories %}
+                            <span class="badge">
+                                {{ categorie.nom }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <p class="text-muted small mb-0">
+                        {{ recette.description|nl2br|raw }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+    {% endfor %}
+
+</div>

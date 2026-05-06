@@ -75,8 +75,14 @@ class HomeController extends AbstractController {
                 $qb->orderBy('r.date', 'DESC');
                 break;
         }
-
         $recettes = $qb->getQuery()->getResult();
+
+// ================= AJAX =================
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('pages/_recettes.html.twig', [
+                        'recettes' => $recettes
+            ]);
+        }
 
         // ================= RENDER =================
         return $this->render('pages/home.html.twig', [
